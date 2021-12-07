@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\UtilisateurRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\UserInterface;
 
@@ -14,7 +16,7 @@ class Utilisateur implements UserInterface
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
-     * @ORM\Column(type="string", length=32, unique=true)
+     * @ORM\Column(type="integer")
      */
     private $id;
 
@@ -22,6 +24,11 @@ class Utilisateur implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $email;
+    
+    /**
+     * @ORM\Column(type="string", length=180, unique=true)
+     */
+    private $username;
 
     /**
      * @ORM\Column(type="json")
@@ -35,9 +42,26 @@ class Utilisateur implements UserInterface
     private $password;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\ManyToMany(targetEntity=Commentaire::class, mappedBy="auteur")
      */
-    private $username;
+    private $commentaires;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Avis::class, mappedBy="idUtilisateur")
+     */
+    private $avis;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=FilmFavori::class, mappedBy="idUtilisateur")
+     */
+    private $filmFavoris;
+
+    public function __construct()
+    {
+        $this->commentaires = new ArrayCollection();
+        $this->avis = new ArrayCollection();
+        $this->filmFavoris = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -123,6 +147,90 @@ class Utilisateur implements UserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentaire[]
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->addAuteur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): self
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            $commentaire->removeAuteur($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Avis[]
+     */
+    public function getAvis(): Collection
+    {
+        return $this->avis;
+    }
+
+    public function addAvi(Avis $avi): self
+    {
+        if (!$this->avis->contains($avi)) {
+            $this->avis[] = $avi;
+            $avi->setIdUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAvi(Avis $avi): self
+    {
+        if ($this->avis->removeElement($avi)) {
+            // set the owning side to null (unless already changed)
+            if ($avi->getIdUtilisateur() === $this) {
+                $avi->setIdUtilisateur(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|FilmFavori[]
+     */
+    public function getFilmFavoris(): Collection
+    {
+        return $this->filmFavoris;
+    }
+
+    public function addFilmFavori(FilmFavori $filmFavori): self
+    {
+        if (!$this->filmFavoris->contains($filmFavori)) {
+            $this->filmFavoris[] = $filmFavori;
+            $filmFavori->addIdUtilisateur($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFilmFavori(FilmFavori $filmFavori): self
+    {
+        if ($this->filmFavoris->removeElement($filmFavori)) {
+            $filmFavori->removeIdUtilisateur($this);
+        }
 
         return $this;
     }
