@@ -1,0 +1,86 @@
+main {
+    flex-direction: row;
+}
+
+.affiche {
+    z-index: 1;
+    border-radius: 1em;
+    box-shadow: 4px 0 5px 0 rgba(0, 0, 0, .2);
+}
+
+.infos{
+    overflow-y: auto;
+}
+
+section {
+    display: flex;
+    column-gap: 1em;
+    margin: 3em 0 .75em 0;
+}
+
+section button{
+    display: none;
+}
+
+section div {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 2.5rem;
+    justify-content: space-between;
+}
+
+.titre {
+    margin: 0 0 .5em 0;
+}
+
+.description {
+    width: 90%;
+}
+
+.comments{
+    display: grid;
+    row-gap: 1em;
+}
+
+.comment {
+    display: flex;
+    align-items: center;
+}
+
+.comment .avatar {
+    width: 3em;
+    height: 3em;
+    object-fit: cover;
+    border-radius: 100%;
+}
+
+.comment .text {
+    margin: 0 0 0 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.comment .text .top {
+    display: flex;
+    align-items: center;
+    column-gap: .5em;
+    margin-bottom: .25em;
+}
+
+.comment .text .top img {
+    height: 1em;
+}
+
+.comment .text .top h3, .comment .text p {
+    margin: 0;
+}
+
+.comment .text .top p {
+    color: rgba(0, 0, 0, .5);
+    font-size: .8em;
+}
+
+form{
+    margin: 0;
+}

@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MoviesUniverse - Recherche{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/search.css") }}">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="title">
+        <h2>Recherche {% if search %}: <span>{{ search }}</span>{% endif %}</h2>
+    </div>
+    {{ form_start(searchForm) }}
+    {{ form_row(searchForm.titre) }}
+    <button type="submit" class="btn">Rechercher</button>
+    {{ form_end(searchForm) }}
+    <div class="films">
+        {% for key,value in result %}
+            <a href="{{ path("film", {id:value.id}) }}">
+                <img src="{{ asset("movies/"~value.id~".jpg") }}" alt="{{ value.titre }}">
+            </a>
+        {% else %}
+            <h3>Aucun film n'a été trouvé !</h3>
+        {% endfor %}
+    </div>
+{% endblock %}

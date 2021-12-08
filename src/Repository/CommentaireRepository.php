@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Commentaire;
+use App\Entity\Film;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,14 @@ class CommentaireRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Commentaire::class);
+    }
+
+    public function getFilmsCommentaires(Film $film){
+        return $this->createQueryBuilder("c")
+            ->where("c.film = :filmId")
+            ->setParameter("filmId", $film->getId())
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

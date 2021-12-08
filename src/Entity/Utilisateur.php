@@ -6,10 +6,12 @@ use App\Repository\UtilisateurRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @ORM\Entity(repositoryClass=UtilisateurRepository::class)
+ * @UniqueEntity(fields={"email"}, message="There is already an account with this email")
  */
 class Utilisateur implements UserInterface
 {
@@ -24,7 +26,7 @@ class Utilisateur implements UserInterface
      * @ORM\Column(type="string", length=180, unique=true)
      */
     private $email;
-    
+
     /**
      * @ORM\Column(type="string", length=180, unique=true)
      */
@@ -42,17 +44,17 @@ class Utilisateur implements UserInterface
     private $password;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Commentaire::class, mappedBy="auteur")
+     * @ORM\OneToMany(targetEntity="Commentaire", mappedBy="auteur")
      */
     private $commentaires;
 
     /**
-     * @ORM\OneToMany(targetEntity=Avis::class, mappedBy="idUtilisateur")
+     * @ORM\OneToMany(targetEntity="Avis", mappedBy="utilisateur")
      */
     private $avis;
 
     /**
-     * @ORM\ManyToMany(targetEntity=FilmFavori::class, mappedBy="idUtilisateur")
+     * @ORM\OneToMany(targetEntity="FilmFavoris", mappedBy="utilisateur")
      */
     private $filmFavoris;
 
@@ -63,23 +65,6 @@ class Utilisateur implements UserInterface
         $this->filmFavoris = new ArrayCollection();
     }
 
-    public function getId(): ?int
-    {
-        return $this->id;
-    }
-
-    public function getEmail(): ?string
-    {
-        return $this->email;
-    }
-
-    public function setEmail(string $email): self
-    {
-        $this->email = $email;
-
-        return $this;
-    }
-
     /**
      * A visual identifier that represents this user.
      *
@@ -87,7 +72,7 @@ class Utilisateur implements UserInterface
      */
     public function getUsername(): string
     {
-        return (string) $this->email;
+        return (string) $this->username;
     }
 
     /**
@@ -102,26 +87,12 @@ class Utilisateur implements UserInterface
         return array_unique($roles);
     }
 
-    public function setRoles(array $roles): self
-    {
-        $this->roles = $roles;
-
-        return $this;
-    }
-
     /**
      * @see UserInterface
      */
     public function getPassword(): string
     {
         return $this->password;
-    }
-
-    public function setPassword(string $password): self
-    {
-        $this->password = $password;
-
-        return $this;
     }
 
     /**
@@ -144,9 +115,40 @@ class Utilisateur implements UserInterface
         // $this->plainPassword = null;
     }
 
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): self
+    {
+        $this->email = $email;
+
+        return $this;
+    }
+
     public function setUsername(string $username): self
     {
         $this->username = $username;
+
+        return $this;
+    }
+
+    public function setRoles(array $roles): self
+    {
+        $this->roles = $roles;
+
+        return $this;
+    }
+
+    public function setPassword(string $password): self
+    {
+        $this->password = $password;
 
         return $this;
     }
@@ -163,7 +165,7 @@ class Utilisateur implements UserInterface
     {
         if (!$this->commentaires->contains($commentaire)) {
             $this->commentaires[] = $commentaire;
-            $commentaire->addAuteur($this);
+            $commentaire->setAuteur($this);
         }
 
         return $this;
@@ -172,7 +174,10 @@ class Utilisateur implements UserInterface
     public function removeCommentaire(Commentaire $commentaire): self
     {
         if ($this->commentaires->removeElement($commentaire)) {
-            $commentaire->removeAuteur($this);
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getAuteur() === $this) {
+                $commentaire->setAuteur(null);
+            }
         }
 
         return $this;
@@ -190,7 +195,7 @@ class Utilisateur implements UserInterface
     {
         if (!$this->avis->contains($avi)) {
             $this->avis[] = $avi;
-            $avi->setIdUtilisateur($this);
+            $avi->setUtilisateur($this);
         }
 
         return $this;
@@ -200,8 +205,8 @@ class Utilisateur implements UserInterface
     {
         if ($this->avis->removeElement($avi)) {
             // set the owning side to null (unless already changed)
-            if ($avi->getIdUtilisateur() === $this) {
-                $avi->setIdUtilisateur(null);
+            if ($avi->getUtilisateur() === $this) {
+                $avi->setUtilisateur(null);
             }
         }
 
@@ -209,27 +214,27 @@ class Utilisateur implements UserInterface
     }
 
     /**
-     * @return Collection|FilmFavori[]
+     * @return Collection|Film[]
      */
     public function getFilmFavoris(): Collection
     {
         return $this->filmFavoris;
     }
 
-    public function addFilmFavori(FilmFavori $filmFavori): self
+    public function addFilmFavori(Film $filmFavori): self
     {
         if (!$this->filmFavoris->contains($filmFavori)) {
             $this->filmFavoris[] = $filmFavori;
-            $filmFavori->addIdUtilisateur($this);
+            $filmFavori->addUtilisateur($this);
         }
 
         return $this;
     }
 
-    public function removeFilmFavori(FilmFavori $filmFavori): self
+    public function removeFilmFavori(Film $filmFavori): self
     {
         if ($this->filmFavoris->removeElement($filmFavori)) {
-            $filmFavori->removeIdUtilisateur($this);
+            $filmFavori->removeUtilisateur($this);
         }
 
         return $this;

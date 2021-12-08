@@ -30,25 +30,20 @@ class Commentaire
     private $date;
 
     /**
-     * @ORM\OneToOne(targetEntity=Commentaire::class, mappedBy="reponse", cascade={"persist", "remove"})
+     * @ORM\OneToOne(targetEntity="Commentaire", cascade={"persist", "remove"})
      */
-    private $commentaire;
+    private $answer;
 
     /**
-     * @ORM\OneToOne(targetEntity=Film::class, inversedBy="commentaire", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity="Film", inversedBy="commentaires", cascade={"persist", "remove"})
      * @ORM\JoinColumn(nullable=false)
      */
     private $film;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Utilisateur::class, inversedBy="commentaires")
+     * @ORM\ManyToOne(targetEntity="Utilisateur", inversedBy="commentaires")
      */
     private $auteur;
-
-    public function __construct()
-    {
-        $this->auteur = new ArrayCollection();
-    }
 
     public function getId(): ?int
     {
@@ -79,61 +74,50 @@ class Commentaire
         return $this;
     }
 
-    public function getCommentaire(): ?self
+    public function getAnswer(): ?self
     {
-        return $this->commentaire;
+        return $this->answer;
     }
 
-    public function setCommentaire(?self $commentaire): self
+    public function setAnswer(?self $answer): self
     {
         // unset the owning side of the relation if necessary
-        if ($commentaire === null && $this->commentaire !== null) {
-            $this->commentaire->setReponse(null);
+        if ($answer === null && $this->answer !== null) {
+            $this->answer->setAnswer(null);
         }
 
         // set the owning side of the relation if necessary
-        if ($commentaire !== null && $commentaire->getReponse() !== $this) {
-            $commentaire->setReponse($this);
+        if ($answer !== null && $answer->getAnswer() !== $this) {
+            $answer->setAnswer($this);
         }
 
-        $this->commentaire = $commentaire;
+        $this->answer = $answer;
 
         return $this;
     }
 
-    public function getFilm(): ?film
+    public function getFilm(): ?Film
     {
         return $this->film;
     }
 
-    public function setFilm(film $film): self
+    public function setFilm(?Film $film): self
     {
         $this->film = $film;
 
         return $this;
     }
 
-    /**
-     * @return Collection|utilisateur[]
-     */
-    public function getAuteur(): Collection
+    public function getAuteur(): ?Utilisateur
     {
         return $this->auteur;
     }
 
-    public function addAuteur(utilisateur $auteur): self
+    public function setAuteur(?Utilisateur $auteur): self
     {
-        if (!$this->auteur->contains($auteur)) {
-            $this->auteur[] = $auteur;
-        }
+        $this->auteur = $auteur;
 
         return $this;
     }
 
-    public function removeAuteur(utilisateur $auteur): self
-    {
-        $this->auteur->removeElement($auteur);
-
-        return $this;
-    }
 }

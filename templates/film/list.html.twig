@@ -1,0 +1,32 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}MoviesUniverse - Liste des films{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <link rel="stylesheet" href="{{ asset("css/films.css") }}">
+{% endblock stylesheets %}
+
+{% block body %}
+    <div class="title">
+        <h2>Nos films</h2>
+        <div class="letters">
+            {% for letterInAlphabet in "A".."Z" %}
+                {% if letter == letterInAlphabet %}
+                    <p>{{ letterInAlphabet }}</p>
+                {% else %}
+                    <a href="{{ path("films") }}?letter={{ letterInAlphabet }}">{{ letterInAlphabet }}</a>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    <div class="films">
+        {% for key,value in films %}
+            <a href="{{ path("film", {id:value.id}) }}">
+                <img src="{{ asset("movies/"~value.id~".jpg") }}" alt="{{ value.titre }}">
+            </a>
+        {% else %}
+            <h3>Aucun film n'a été trouvé !</h3>
+        {% endfor %}
+    </div>
+{% endblock %}

@@ -23,16 +23,16 @@ class Avis
     private $positif;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Film::class, inversedBy="avis")
+     * @ORM\ManyToOne(targetEntity="Film", inversedBy="avis")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $idFilm;
+    private $film;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Utilisateur::class, inversedBy="avis")
+     * @ORM\ManyToOne(targetEntity="Utilisateur", inversedBy="avis")
      * @ORM\JoinColumn(nullable=false)
      */
-    private $idUtilisateur;
+    private $utilisateur;
 
     public function getId(): ?int
     {
@@ -51,26 +51,26 @@ class Avis
         return $this;
     }
 
-    public function getIdFilm(): ?film
+    public function getFilm(): ?Film
     {
-        return $this->idFilm;
+        return $this->film;
     }
 
-    public function setIdFilm(?film $idFilm): self
+    public function setFilm(?Film $film): self
     {
-        $this->idFilm = $idFilm;
+        $this->film = $film;
 
         return $this;
     }
 
-    public function getIdUtilisateur(): ?utilisateur
+    public function getUtilisateur(): ?Utilisateur
     {
-        return $this->idUtilisateur;
+        return $this->utilisateur;
     }
 
-    public function setIdUtilisateur(?utilisateur $idUtilisateur): self
+    public function setUtilisateur(?Utilisateur $utilisateur): self
     {
-        $this->idUtilisateur = $idUtilisateur;
+        $this->utilisateur = $utilisateur;
 
         return $this;
     }

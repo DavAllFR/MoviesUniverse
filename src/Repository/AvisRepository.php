@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\Avis;
+use App\Entity\Film;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -17,6 +18,26 @@ class AvisRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Avis::class);
+    }
+
+    public function countLikes(Film $film)
+    {
+        return $this->createQueryBuilder("avis")
+            ->where("avis.film = :id AND avis.positif = true")
+            ->setParameter("id", $film->getId())
+            ->select("COUNT(avis.utilisateur)")
+            ->getQuery()
+            ->getResult();
+    }
+
+    public function countDislikes(Film $film)
+    {
+        return $this->createQueryBuilder("avis")
+            ->where("avis.film = :id AND avis.positif = false")
+            ->setParameter("id", $film->getId())
+            ->select("COUNT(avis.utilisateur)")
+            ->getQuery()
+            ->getResult();
     }
 
     // /**

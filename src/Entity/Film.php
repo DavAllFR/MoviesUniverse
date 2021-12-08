@@ -30,13 +30,25 @@ class Film
     private $description;
 
     /**
-     * @ORM\OneToMany(targetEntity=Avis::class, mappedBy="idFilm")
+     * @ORM\OneToMany(targetEntity="Avis", mappedBy="film")
      */
     private $avis;
+
+    /**
+     * @ORM\OneToMany(targetEntity="Commentaire", mappedBy="film")
+     */
+    private $commentaires;
+
+    /**
+     * @ORM\OneToMany(targetEntity="FilmFavoris", mappedBy="film")
+     */
+    private $favoris;
 
     public function __construct()
     {
         $this->avis = new ArrayCollection();
+        $this->commentaires = new ArrayCollection();
+        $this->favoris = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -80,7 +92,7 @@ class Film
     {
         if (!$this->avis->contains($avi)) {
             $this->avis[] = $avi;
-            $avi->setIdFilm($this);
+            $avi->setFilm($this);
         }
 
         return $this;
@@ -90,9 +102,66 @@ class Film
     {
         if ($this->avis->removeElement($avi)) {
             // set the owning side to null (unless already changed)
-            if ($avi->getIdFilm() === $this) {
-                $avi->setIdFilm(null);
+            if ($avi->getFilm() === $this) {
+                $avi->setFilm(null);
             }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Commentaire[]
+     */
+    public function getCommentaires(): Collection
+    {
+        return $this->commentaires;
+    }
+
+    public function addCommentaire(Commentaire $commentaire): self
+    {
+        if (!$this->commentaires->contains($commentaire)) {
+            $this->commentaires[] = $commentaire;
+            $commentaire->setFilm($this);
+        }
+
+        return $this;
+    }
+
+    public function removeCommentaire(Commentaire $commentaire): self
+    {
+        if ($this->commentaires->removeElement($commentaire)) {
+            // set the owning side to null (unless already changed)
+            if ($commentaire->getFilm() === $this) {
+                $commentaire->setFilm(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Utilisateur[]
+     */
+    public function getFavoris(): Collection
+    {
+        return $this->favoris;
+    }
+
+    public function addFavori(Utilisateur $favori): self
+    {
+        if (!$this->favoris->contains($favori)) {
+            $this->favoris[] = $favori;
+            $favori->addFilmFavori($this);
+        }
+
+        return $this;
+    }
+
+    public function removeFavori(Utilisateur $favori): self
+    {
+        if ($this->favoris->removeElement($favori)) {
+            $favori->removeFilmFavori($this);
         }
 
         return $this;

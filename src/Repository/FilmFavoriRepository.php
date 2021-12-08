@@ -2,21 +2,22 @@
 
 namespace App\Repository;
 
-use App\Entity\FilmFavori;
+use App\Entity\Film;
+use App\Entity\FilmFavoris;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method FilmFavori|null find($id, $lockMode = null, $lockVersion = null)
- * @method FilmFavori|null findOneBy(array $criteria, array $orderBy = null)
- * @method FilmFavori[]    findAll()
- * @method FilmFavori[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method FilmFavoris|null find($id, $lockMode = null, $lockVersion = null)
+ * @method FilmFavoris|null findOneBy(array $criteria, array $orderBy = null)
+ * @method FilmFavoris[]    findAll()
+ * @method FilmFavoris[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
 class FilmFavoriRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, FilmFavori::class);
+        parent::__construct($registry, FilmFavoris::class);
     }
 
     // /**
